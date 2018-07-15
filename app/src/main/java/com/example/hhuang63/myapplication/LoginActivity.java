@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
@@ -56,8 +58,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public interface AuthenticationService {
         @POST("auth/login")
         @FormUrlEncoded
-        Call<List<String>> login(@Field("email") String email,
-                                 @Field("password") String password);
+        Call<String> login(@Field("email") String email,
+                           @Field("password") String password);
     }
     private AuthenticationService loginService = retrofit.create(AuthenticationService.class);
 
@@ -332,8 +334,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-//            Call<?> output = loginService.login("{'email': 'asdf', 'password': 'asdf'}");
-            Call<?> output = loginService.login(mEmail, mPassword);
+            Call<String> output = loginService.login(mEmail, mPassword);
+            output.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    Log.d("UserLoginTask", "Successful login?");
+                    Log.d("UserLoginTask", response.body());
+                    return;
+                }
+
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.d("UserLoginTask", "Failed login?");
+                    Log.d("UserLoginTask", t.getMessage());
+                    return;
+                }
+            });
             Log.d("UserLoginTask", output.toString());
             Log.d("UserLoginTask", "Hello World");
 
