@@ -131,39 +131,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         showProgress(true);
         mAuthTask = new UserLoginTask(email, password);
         mAuthTask.execute((Void) null);
-
-//        boolean cancel = false;
-//        View focusView = null;
-//
-//        // Check for a valid password, if the user entered one.
-//        if (!TextUtils.isEmpty(password)) {
-//            mPasswordView.setError(getString(R.string.error_invalid_password));
-//            focusView = mPasswordView;
-//            cancel = true;
-//        }
-//
-//        // Check for a valid email address.
-//        if (TextUtils.isEmpty(email)) {
-//            mEmailView.setError(getString(R.string.error_field_required));
-//            focusView = mEmailView;
-//            cancel = true;
-//        } else if (false) {
-//            mEmailView.setError(getString(R.string.error_invalid_email));
-//            focusView = mEmailView;
-//            cancel = true;
-//        }
-//
-//        if (cancel) {
-//            // There was an error; don't attempt login and focus the first
-//            // form field with an error.
-//            focusView.requestFocus();
-//        } else {
-//            // Show a progress spinner, and kick off a background task to
-//            // perform the user login attempt.
-//            showProgress(true);
-//            mAuthTask = new UserLoginTask(email, password);
-//            mAuthTask.execute((Void) null);
-//        }
     }
 
     /**
@@ -260,8 +227,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             Map<String, String> data = new HashMap<>();
             data.put("email", mEmail);
             data.put("password", mPassword);
@@ -271,20 +236,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
             try {
                 Response<String> response = output.execute();
-                Log.d("UserLoginTask", "Successful login?");
-                if (response.body() != null) {
-                    Log.d("UserLoginTask", response.body());
+                if (response.code() == 200) {
+                    Log.d("UserLoginTask", "Successful login?");
+                    if (response.body() != null) {
+                        Log.d("UserLoginTask", response.body());
+                    }
+                    Log.d("UserLoginTask", response.toString());
+                    return true;
+                } else {
+                    return false;
                 }
-                Log.d("UserLoginTask", response.toString());
-                return true;
             } catch (IOException e) {
                 Log.d("UserLoginTask", "Failed login?");
                 e.printStackTrace();
                 return false;
             }
-
-            // TODO: register the new account here.
-            //return true;
         }
 
         @Override
